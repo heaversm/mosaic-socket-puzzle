@@ -1,39 +1,117 @@
 <html>
+
 <head>
     <title>Mosaic</title>
+    <link rel="stylesheet" type="text/css" href="js/lib/magnifier.css">
     <style>
-    .images {
-        width: 930px;
-        height: 930px;
-        overflow: hidden;
-        display: flex;
-        flex-wrap: wrap;
-        align-content: flex-start;
-    }
-    .image {
-        width: 300px;
-        height: 300px;
-        padding: 5px;
-        flex-basis: 300px;
-        max-width: 300px;
-    }
+        .images {
+            width: 930px;
+            height: 930px;
+            overflow: hidden;
+            display: flex;
+            flex-wrap: wrap;
+            align-content: flex-start;
+        }
+
+        .image {
+            width: 300px;
+            height: 300px;
+            padding: 5px;
+            flex-basis: 300px;
+            max-width: 300px;
+            transition: padding 800ms ease-in-out;
+        }
+
+        .images.active .image {
+            padding: 0;
+        }
+
+        .images.magnify .image {
+            display: none;
+        }
+
+        .images.magnify .magnified {
+            display: block;
+        }
     </style>
 </head>
+
 <body>
     <div class="images">
-        <img src="assets/atlas-01.jpg" alt="" class="image">
-        <img src="assets/atlas-02.jpg" alt="" class="image">
-        <img src="assets/atlas-03.jpg" alt="" class="image">
-        <img src="assets/atlas-04.jpg" alt="" class="image">
-        <img src="assets/atlas-05.jpg" alt="" class="image">
-        <img src="assets/atlas-06.jpg" alt="" class="image">
-        <img src="assets/atlas-07.jpg" alt="" class="image">
-        <img src="assets/atlas-08.jpg" alt="" class="image">
-        <img src="assets/atlas-09.jpg" alt="" class="image">
+        <img src="assets/atlas-01.jpg" alt="Mosaic Tile" class="image">
+        <img src="assets/atlas-02.jpg" alt="Mosaic Tile" class="image">
+        <img src="assets/atlas-03.jpg" alt="Mosaic Tile" class="image">
+        <img src="assets/atlas-04.jpg" alt="Mosaic Tile" class="image">
+        <img src="assets/atlas-05.jpg" alt="Mosaic Tile" class="image">
+        <img src="assets/atlas-06.jpg" alt="Mosaic Tile" class="image">
+        <img src="assets/atlas-07.jpg" alt="Mosaic Tile" class="image">
+        <img src="assets/atlas-08.jpg" alt="Mosaic Tile" class="image">
+        <img src="assets/atlas-09.jpg" alt="Mosaic Tile" class="image">
+
+        <div class="magnified">
+            <div class="magnifier-thumb-wrapper">
+                <img id="thumb" src="assets/atlas.jpg">
+            </div>
+        </div>
     </div>
     <script src="js/lib/socket.io.dev.js"></script>
+    <script src="js/lib/Magnifier.js"></script>
+    <script src="js/lib/Event.js"></script>
     <script>
-    const socket = io();
+        window.onload = function () {
+            const socket = io();
+
+            const MAGNIFY_DELAY = 1000; //gives the transition time
+            let magnifierTimeout;
+
+            const preloadLargeImage = function () {
+                const magnifiedImage = new Image();
+                magnifiedImage.attributes.src = 'assets/atlas-lg.jpg';
+            }
+
+            const evt = new Event();
+            const m = new Magnifier(evt);
+
+            const $images = document.querySelector('.images');
+
+            const initMagnifier = function () {
+                m.attach({
+                    thumb: '#thumb',
+                    large: 'assets/atlas-lg.jpg',
+                    mode: 'inside',
+                    zoom: 3,
+                    zoomable: true
+                });
+            }
+
+            const handleMagnify = function () {
+                document.querySelector('.images.active').classList.add('magnify');
+            }
+            
+            const handleUnmagnify = function () {
+                document.querySelector('.images.magnify').classList.remove('magnify');
+            }
+
+            initMagnifier();
+
+            socket.on('handleConnect', function (msg) {
+                console.log('handleConnect');
+                $images.classList.add('active');
+                magnifierTimeout = setTimeout(() => {
+                    handleMagnify();
+                }, MAGNIFY_DELAY);
+            });
+
+            socket.on('handleDisconnect', function (msg) {
+                clearTimeout(magnifierTimeout);
+                console.log('handleDisconnect');
+                document.querySelector('.images.active').classList.remove('active');
+                magnifierTimeout = setTimeout(() => {
+                    handleUnmagnify();
+                }, MAGNIFY_DELAY);
+            });
+        }
     </script>
 </body>
+
 </html>

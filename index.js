@@ -7,18 +7,47 @@ const http = require('http').createServer(app);
 const io = require('socket.io')(http);
 
 //connection vars
-const numConnections = 0;
+let numConnections = 0;
+let lastConnections = 0;
+const requiredConnections = 9;
 
 
 app.use(express.static('public'))
-app.get('/', function(req, res) {
+app.get('/', function (req, res) {
     res.sendFile(path.join(__dirname + '/index.html'));
 });
 
-io.on('connection', function(socket){
+const handleConnectionChange = function(){
+    console.log(numConnections);
+    if (numConnections == requiredConnections && numConnections > lastConnections){
+        console.log('emitConnections');
+        emitConnections();
+    } else if (numConnections < requiredConnections && lastConnections == requiredConnections){
+        console.log('emitDisconnections');
+        emitDisconnections();
+    }
+}
+
+const emitConnections = function(){
+    io.emit('handleConnect', { numConnections: numConnections });
+}
+
+const emitDisconnections = function(){
+    io.emit('handleDisconnect', { numConnections: numConnections });
+}
+
+io.on('connection', function (socket) {
+    lastConnections = numConnections;
     numConnections++;
     console.log('a user connected');
+    handleConnectionChange();
+    socket.on('disconnect', function () {
+        console.log('user disconnected');
+        lastConnections = numConnections;
+        numConnections--;
+        handleConnectionChange();
+    });
 });
-  
+
 
 http.listen(port, () => console.log(`Example app listening on port ${port}!`))
