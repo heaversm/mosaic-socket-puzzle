@@ -18,12 +18,12 @@ app.get('/', function (req, res) {
 });
 
 const handleConnectionChange = function(){
-    console.log(numConnections);
+    //console.log(numConnections);
     if (numConnections == requiredConnections && numConnections > lastConnections){
-        console.log('emitConnections');
+        //console.log('emitConnections');
         emitConnections();
     } else if (numConnections < requiredConnections && lastConnections == requiredConnections){
-        console.log('emitDisconnections');
+        //console.log('emitDisconnections');
         emitDisconnections();
     }
 }
@@ -39,10 +39,10 @@ const emitDisconnections = function(){
 io.on('connection', function (socket) {
     lastConnections = numConnections;
     numConnections++;
-    console.log('a user connected');
+    //console.log('a user connected');
     handleConnectionChange();
     socket.on('disconnect', function () {
-        console.log('user disconnected');
+        //console.log('user disconnected');
         lastConnections = numConnections;
         numConnections--;
         handleConnectionChange();
@@ -50,4 +50,4 @@ io.on('connection', function (socket) {
 });
 
 
-http.listen(port, () => console.log(`Example app listening on port ${port}!`))
+http.listen(port, () => console.log(`Example app listening on port ${port}!`));
