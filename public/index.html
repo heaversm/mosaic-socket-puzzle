@@ -31,11 +31,11 @@
         }
 
         .magnified {
-            display: none;
+            visibility: hidden;
         }
 
         .images.magnify .magnified {
-            display: block;
+            visibility: visible;
         }
     </style>
 </head>
@@ -70,7 +70,7 @@
 
             const preloadLargeImage = function () {
                 const magnifiedImage = new Image();
-                magnifiedImage.attributes.src = 'assets/atlas-lg.jpg';
+                magnifiedImage.src = 'assets/atlas-lg.jpg';
             }
 
             const evt = new Event();
