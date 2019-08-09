@@ -19,21 +19,30 @@ app.get('/', function (req, res) {
 
 const handleConnectionChange = function(){
     //console.log(numConnections);
+    
     if (numConnections == requiredConnections && numConnections > lastConnections){
-        //console.log('emitConnections');
-        emitConnections();
+        //console.log('emitConnectionsReached');
+        emitConnectionsReached();
     } else if (numConnections < requiredConnections && lastConnections == requiredConnections){
         //console.log('emitDisconnections');
         emitDisconnections();
     }
+    
+    if (numConnections < requiredConnections){
+        emitConnectionChange();
+    }
 }
 
-const emitConnections = function(){
+const emitConnectionsReached = function(){
     io.emit('handleConnect', { numConnections: numConnections });
 }
 
 const emitDisconnections = function(){
     io.emit('handleDisconnect', { numConnections: numConnections });
+}
+
+const emitConnectionChange = function(){
+    io.emit('handleConnectionChange', { numConnections: numConnections, lastConnections: lastConnections });
 }
 
 io.on('connection', function (socket) {
