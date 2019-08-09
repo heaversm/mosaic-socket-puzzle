@@ -1,0 +1,39 @@
+<html>
+<head>
+    <title>Mosaic</title>
+    <style>
+    .images {
+        width: 930px;
+        height: 930px;
+        overflow: hidden;
+        display: flex;
+        flex-wrap: wrap;
+        align-content: flex-start;
+    }
+    .image {
+        width: 300px;
+        height: 300px;
+        padding: 5px;
+        flex-basis: 300px;
+        max-width: 300px;
+    }
+    </style>
+</head>
+<body>
+    <div class="images">
+        <img src="assets/atlas-01.jpg" alt="" class="image">
+        <img src="assets/atlas-02.jpg" alt="" class="image">
+        <img src="assets/atlas-03.jpg" alt="" class="image">
+        <img src="assets/atlas-04.jpg" alt="" class="image">
+        <img src="assets/atlas-05.jpg" alt="" class="image">
+        <img src="assets/atlas-06.jpg" alt="" class="image">
+        <img src="assets/atlas-07.jpg" alt="" class="image">
+        <img src="assets/atlas-08.jpg" alt="" class="image">
+        <img src="assets/atlas-09.jpg" alt="" class="image">
+    </div>
+    <script src="js/lib/socket.io.dev.js"></script>
+    <script>
+    const socket = io();
+    </script>
+</body>
+</html>
